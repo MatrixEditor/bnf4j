@@ -5,7 +5,7 @@
 ![Issues](https://img.shields.io:/static/v1?label=Issues&message=Infinity&color=orange)
 
 
-The Project `lang4j` was supposed to be a library or API to generate individual parsers for different filetypes. Though, this option is not implemented yet, the described parsers can be created using an event-based parsing model located in the `staf` (STreaming Api for Files) module.
+The Project `bnf4j` was supposed to be a library or API to generate individual parsers for different filetypes. Though, this option is not implemented yet, the described parsers can be created using an event-based parsing model located in the `staf` (STreaming Api for Files) module.
 
 ### STAF (Streaming API for Files)
 

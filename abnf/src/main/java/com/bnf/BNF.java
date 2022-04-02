@@ -37,7 +37,7 @@ import java.util.TreeMap;
  * </pre>
  * In order to implement this rule we have to specify three different components:
  * <pre>
- *     BNFElement&lt;?> youOrWorld = bnf.rule("'you'").or(bnf.rule("'World'");
+ *     BNFElement&lt;?> youOrWorld = bnf.rule("( 'You' / 'World' )");
  *     BNFElement&lt;?> hello = bnf.rule("'Hello'");
  *
  *     bnf.rule("example", hello.append(youOrWorld));
