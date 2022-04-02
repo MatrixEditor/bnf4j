@@ -43,8 +43,6 @@ public interface BNFElement<B extends BNFElement<B>> {
      */
     B or(BNFElement<?>... others);
 
-    B strictOr(BNFElement<?>... others);
-
     /**
      * Declares the occurrence of this element. The associated value
      * as {@link String} would be:

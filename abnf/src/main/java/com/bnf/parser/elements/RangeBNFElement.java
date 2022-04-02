@@ -31,7 +31,7 @@ public class RangeBNFElement extends AbstractBNFElement<RangeBNFElement> {
         // Handle the min or max occurrences, for instance if max or min is < 0
         // the values should be ignored
         else {
-            if (min == max) {
+            if (min == max && min != -1) {
                 // RFC 2234: 3*3<element> allows exactly 3 elements
                 sb.append(min);
             } else {

@@ -14,7 +14,7 @@ import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CSVParser extends TypeParser<CSVTable> implements CSVConstants {
+public class CSVParser extends TypeParser<CSVTable, CSVParser> implements CSVConstants {
 
     private final CSVTable table = new CSVTable();
 
@@ -33,9 +33,11 @@ public class CSVParser extends TypeParser<CSVTable> implements CSVConstants {
             return null;
         }
         LangEvent event = pullEvent();
-        if (event == null) return null;
-
-        return event instanceof CSVCellEvent ? (CSVCellEvent) event : null;
+        while (!(event instanceof CSVCellEvent)) {
+            event = pullEvent();
+            if (event == null) break;
+        }
+        return (CSVCellEvent) event;
     }
 
     public CSVColumnEvent nextColumn() throws IOException, ParseException {
@@ -95,18 +97,6 @@ public class CSVParser extends TypeParser<CSVTable> implements CSVConstants {
             }
         }
         return table;
-    }
-
-    @Override
-    public CSVParser setSource(File source) throws IOException {
-        super.setSource(source);
-        return this;
-    }
-
-    @Override
-    public CSVParser setSource(String file) throws IOException {
-        super.setSource(file);
-        return this;
     }
 
     @Override

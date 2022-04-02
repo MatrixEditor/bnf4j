@@ -1,5 +1,6 @@
 package com.bnf.parser; //@date 01.04.2022
 
+import com.bnf.BNF;
 import com.bnf.BNFCharSpec;
 import com.bnf.BNFElement;
 import com.bnf.parser.event.BNFEvent;
@@ -78,6 +79,7 @@ public class BNFFragmentedScanner extends FragmentFileScanner implements BNFChar
             getScanner().skipChar(current);
         } else if (Character.isDigit(current)) {
             l = Character.getNumericValue(current);
+            getScanner().skipChar(current);
         } else {
             return false;
         }
@@ -93,7 +95,7 @@ public class BNFFragmentedScanner extends FragmentFileScanner implements BNFChar
         }
         // only '*'
         else {
-            min = 0;
+            min = l;
             max = -1;
         }
         return true;
@@ -116,8 +118,10 @@ public class BNFFragmentedScanner extends FragmentFileScanner implements BNFChar
 
         @Override
         public int next() throws IOException, ParseException {
+            boolean num = false;
             try {
                 do {
+                    num = false;
                     // if the rule starts with a ' ', this should be skipped
                     add = getScanner().skipDeclSpaces();
 
@@ -165,6 +169,7 @@ public class BNFFragmentedScanner extends FragmentFileScanner implements BNFChar
                             return eventType = BNFEvent.OR_EVENT;
 
                         case TEXT_NUM:
+                            num = true;
                             scanText(SPACE, BNFEvent.TEXT_EVENT);
                             return getEventType();
 
@@ -194,6 +199,9 @@ public class BNFFragmentedScanner extends FragmentFileScanner implements BNFChar
                 } while (getState() == SCANNER_STATE_PROLOG);
             } catch (EOFException e) {
                 setState(SCANNER_STATE_TERMINATED);
+                if (eventType != BNFEvent.REF_EVENT && !num) {
+                    setEventType(BNFEvent.END_DOCUMENT);
+                }
                 return getEventType();
             }
 

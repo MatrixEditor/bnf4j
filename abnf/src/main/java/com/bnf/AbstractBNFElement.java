@@ -47,31 +47,33 @@ public abstract class AbstractBNFElement<B extends BNFElement<B>> implements BNF
 
     @Override
     public B append(BNFElement<?>... others) {
-        return getSequence(others, BNFSequenceGroup.SequenceType.OPEN);
+        return getSequence(others, BNFSequenceGroup.SequenceType.OPEN, true);
     }
 
-    private B getSequence(BNFElement<?>[] others, BNFSequenceGroup.SequenceType open) {
+    private B getSequence(BNFElement<?>[] others, BNFSequenceGroup.SequenceType type, boolean shouldAdd) {
+        if (this instanceof BNFSequenceGroup && shouldAdd) {
+            BNFSequenceGroup group = (BNFSequenceGroup) this;
+            //noinspection unchecked
+            return (B) group.add(others);
+        }
+
         BNFElement<?>[] bnfElements = new BNFElement<?>[others.length + 1];
         bnfElements[0] = this;
         System.arraycopy(others, 0, bnfElements, 1, others.length);
         //noinspection unchecked
-        return (B) new BNFSequenceGroup(bnfElements, open);
+        return (B) new BNFSequenceGroup(bnfElements, type);
     }
 
     @Override
     public B strictAppend(BNFElement<?>... others) {
-        return getSequence(others, BNFSequenceGroup.SequenceType.STRICT);
+        return getSequence(others, BNFSequenceGroup.SequenceType.STRICT, false);
     }
 
     @Override
     public B or(BNFElement<?>... others) {
-        return getSequence(others, BNFSequenceGroup.SequenceType.OR);
+        return getSequence(others, BNFSequenceGroup.SequenceType.OR, false);
     }
 
-    @Override
-    public B strictOr(BNFElement<?>... others) {
-        return getSequence(others, BNFSequenceGroup.SequenceType.STRICT_OR);
-    }
 
     protected int hexOf(String val) {
         return Integer.parseInt(val, 16);

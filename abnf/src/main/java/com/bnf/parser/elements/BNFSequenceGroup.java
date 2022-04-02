@@ -7,8 +7,9 @@ import java.util.StringJoiner;
 
 public class BNFSequenceGroup extends AbstractBNFElement<BNFSequenceGroup> {
 
-    private final BNFElement<?>[] elements;
-    private final SequenceType    type;
+    private final SequenceType type;
+
+    private BNFElement<?>[] elements;
 
     public BNFSequenceGroup(BNFElement<?>[] elements, SequenceType type) {
         this.elements = elements;
@@ -19,7 +20,7 @@ public class BNFSequenceGroup extends AbstractBNFElement<BNFSequenceGroup> {
     public BNFSequenceGroup(String name, BNFElement<?>... elements) {
         super.name    = name;
         this.elements = elements;
-        this.type = SequenceType.OPEN;
+        this.type     = SequenceType.OPEN;
     }
 
     private String groupBy(BNFElement<?>[] bnfElements, SequenceType type) {
@@ -29,6 +30,17 @@ public class BNFSequenceGroup extends AbstractBNFElement<BNFSequenceGroup> {
             sb.add(n);
         }
         return sb.toString();
+    }
+
+    public BNFSequenceGroup add(BNFElement<?>... elements) {
+        BNFElement<?>[] array = new BNFElement[getElements().length + elements.length];
+        System.arraycopy(getElements(), 0, array, 0, getElements().length);
+        System.arraycopy(elements, 0, array, getElements().length, elements.length);
+
+        //return new BNFSequenceGroup(array, getType());
+        this.name = groupBy(array, getType());
+        this.elements = array;
+        return this;
     }
 
     public BNFElement<?>[] getElements() {
@@ -42,7 +54,7 @@ public class BNFSequenceGroup extends AbstractBNFElement<BNFSequenceGroup> {
     public enum SequenceType {
         OR("", "", " / "),
         STRICT("( ", " )", " "),
-        STRICT_OR("[ ", " ]", " / "),
+        OPTIONAL("[ ", " ]", " "),
         OPEN("", "", " ");
 
         private final String prefix, postfix, delimiter;

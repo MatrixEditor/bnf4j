@@ -32,11 +32,13 @@ public class TextElement extends AbstractBNFElement<TextElement> implements BNFC
             }
             if (ref) {
                 type = Type.Ref;
+                name = value;
             } else {
                 type = Type.Text;
+                name = value.contains("\"") ? value : "\"" + value + "\"";
             }
             content = value.toCharArray();
-            name    = orig = value;
+            orig = value;
         }
     }
 

@@ -15,8 +15,11 @@ public class BNFEventAllocator implements EventAllocator {
         switch (fragmentFileScanner.getEventType()) {
             case BNFEvent.TEXT_EVENT:
             case BNFEvent.COMMENT_EVENT:
-            case BNFEvent.REF_EVENT:
                 event = new BNFEvent.TextEvent(sc.getTextElement(), sc.isAddable());
+                break;
+
+            case BNFEvent.REF_EVENT:
+                event = new BNFEvent.TextEvent(sc.getTextElement(), sc.isAddable(), BNFEvent.REF_EVENT);
                 break;
 
             case BNFEvent.OCCURRENCE_EVENT:
@@ -31,6 +34,9 @@ public class BNFEventAllocator implements EventAllocator {
                 event = new BNFEvent.OREvent();
                 break;
 
+            case BNFEvent.END_DOCUMENT:
+                event = new BNFEvent.EndDocumentEvent();
+                break;
 
         }
         return event;

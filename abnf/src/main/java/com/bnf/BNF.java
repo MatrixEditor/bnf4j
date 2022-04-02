@@ -123,19 +123,19 @@ public final class BNF {
                     // Normal checking is done below
                     int rel = internalEq(ref, value, offset);
                     if (rel == -1) return -1;
-                    offset += rel;
+                    offset = rel;
                     break;
                 }
 
-                // With Text and Concat type every character beginning at the
+                // With Text and Concat type every character beginning from the
                 // offset position is compared and if it doesn't fit -1 is returned.
                 case Text:
                 case Concat: {
                     char[] x = (char[]) e.getContent();
-                    for (int i = offset; i < x.length; i++) {
+                    for (int i = 0; i < x.length; i++) {
                         // REVISIT: additional check of index bounds
-                        if (i >= value.length()) return -1;
-                        if (x[i] != value.charAt(i)) return -1;
+                        if (offset + i >= value.length()) return -1;
+                        if (x[i] != value.charAt(offset + i)) return -1;
                     }
                     offset += x.length;
                     break;
@@ -146,6 +146,7 @@ public final class BNF {
                 case Range: {
                     // REVISIT: additional check of index bounds
                     if (offset >= value.length()) return -1;
+
                     char[] y  = (char[]) e.getContent();
                     char current = value.charAt(offset);
                     if (!(current >= y[0] && current <= y[1])) return -1;
@@ -154,7 +155,7 @@ public final class BNF {
                 }
 
                 // Checking if the current character at offset position meets
-                // the defined range from the TextElement.
+                // the defined one from the TextElement.
                 case Single: {
                     // REVISIT: additional check of index bounds
                     if (offset >= value.length()) return -1;
@@ -183,26 +184,26 @@ public final class BNF {
                 if (min > 0) return -1;
 
             }
-            offset += cOffset;
+            offset = cOffset;
             // Case 2: The minimum is greater than 1. We can continue if we
             // reach the minimum amount of checks with the linked object.
             if (min > 1) {
                 // The loop starts from 1 and ends at the min-value. As described
-                // above if the return value is -1 there was no match.
+                // above if the return value is -1 if there was no match.
                 for (int i = 1; i < min; i++) {
                     // REVISIT: additional check of index bounds
                     if (offset >= value.length()) return -1;
 
                     cOffset = internalEq(e.getLinked(), value, offset);
                     if (cOffset == -1) return -1;
-                    offset += cOffset;
+                    offset = cOffset;
                 }
             }
             // Case 3: The maximum is -1. In this case we loop until we have
             // no match by the underlying linked BNFElement.
             if (max == RANGE_INFINITY) {
                 while ((cOffset = internalEq(e.getLinked(), value, offset)) != -1) {
-                    offset += cOffset;
+                    offset = cOffset;
                     // REVISIT: additional check of index bounds. Here we have
                     // to return the offset because it is optional to have this
                     // value another time.
@@ -219,7 +220,7 @@ public final class BNF {
 
                 cOffset = internalEq(e.getLinked(), value, offset);
                 if (cOffset == -1) return -1;
-                offset += cOffset;
+                offset = cOffset;
             }
             // Checking is done now and the relative offset ca be returned. This
             // value is guaranteed to be not -1.
@@ -241,22 +242,25 @@ public final class BNF {
                 case STRICT:
                 case OPEN: {
                     for (BNFElement<?> tmp : elements) {
+                        // REVISIT: additional check of index bounds
+                        if (offset >= value.length()) return offset;
+
                         if ((cOffset = internalEq(tmp, value, offset)) == -1) return -1;
-                        offset += cOffset;
+                        offset = cOffset;
                     }
                     break;
                 }
                 // The OR type can be described as a logical OR concatenation
                 // of different elements. The loop does not stop if one element
                 // fails to match.
-                case STRICT_OR:
+                case OPTIONAL:
                 case OR: {
                     for (BNFElement<?> tmp : elements) {
                         if ((cOffset = internalEq(tmp, value, offset)) != -1) {
                             // The jump would be out of this loop but not out of
                             // the switch statement, so we have to return the
                             // current offset directly.
-                            return cOffset + offset;
+                            return cOffset;
                         }
                     }
                     return -1;

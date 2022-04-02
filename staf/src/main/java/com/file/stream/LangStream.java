@@ -19,9 +19,9 @@ public interface LangStream<S extends LangStream<S>> {
 
     default void forEach(Consumer<? super LangEvent> consumer) {}
 
-    default S setSource(String file) throws IOException {
-        Objects.requireNonNull(file);
-        return setSource(new FileReader(file));
+    default S setSource(String src) throws IOException {
+        Objects.requireNonNull(src);
+        return setSource(new StringReader(src));
     }
 
     default S setSource(File source) throws IOException {

@@ -103,7 +103,7 @@ public class CSVFragmentedScanner extends FragmentFileScanner {
                 } while (getState() == SCANNER_STATE_PROLOG || getState() == SCANNER_STATE_HEADER);
                 return getEventType();
             } catch (EOFException e) {
-                //EOF only throw while loading content
+                //EOF: throw while loading content
                 setState(SCANNER_STATE_TERMINATED);
             }
 

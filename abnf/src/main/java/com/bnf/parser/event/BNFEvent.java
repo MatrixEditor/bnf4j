@@ -10,6 +10,7 @@ public abstract class BNFEvent implements LangEvent {
     public static final int OR_EVENT         = 6;
     public static final int COMMENT_EVENT    = 7;
     public static final int REF_EVENT        = 8;
+    public static final int END_DOCUMENT     = 9;
 
     public static class GroupEvent extends BNFEvent {
 
@@ -45,10 +46,16 @@ public abstract class BNFEvent implements LangEvent {
     public static class TextEvent extends BNFEvent {
         private final boolean addable;
         private final String  content;
+        private final int     type;
 
         public TextEvent(String content, boolean addable) {
+            this(content, addable, TEXT_EVENT);
+        }
+
+        public TextEvent(String content, boolean addable, int type) {
             this.addable = addable;
             this.content = content;
+            this.type    = type;
         }
 
         public String getContent() {
@@ -61,7 +68,7 @@ public abstract class BNFEvent implements LangEvent {
 
         @Override
         public int getType() {
-            return TEXT_EVENT;
+            return type;
         }
 
         @Override
@@ -97,6 +104,14 @@ public abstract class BNFEvent implements LangEvent {
         @Override
         public int getType() {
             return OCCURRENCE_EVENT;
+        }
+    }
+
+    public static class EndDocumentEvent extends BNFEvent {
+
+        @Override
+        public int getType() {
+            return END_DOCUMENT;
         }
     }
 }
