@@ -1,4 +1,4 @@
-# Project: lang4j
+# Project: bnf4j
 
 ![author](https://img.shields.io:/static/v1?label=Author:&message=MatrixEditor&color=grey)
 ![build](https://img.shields.io:/static/v1?label=Build&message=passing&color=green)
